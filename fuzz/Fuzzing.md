@@ -11,6 +11,8 @@ The simdjson library tries to follow [fuzzing best practises](https://google.git
 
 There is both "normal" fuzzers just feeding the api with fuzz data, as well as **differential** fuzzers. The differential fuzzers feed the same data to the multiple implementations (haswell, westmere and fallback) and ensure the same results are achieved. This makes sure the user will always get the same answer regardless of which implementation is in use.
 
+`fuzz_number_differential` is a different kind of differential fuzzer: it feeds the same number to the DOM and On-Demand front-ends and checks that the two agree on *range validation* rather than on implementation selection. It exists because a caller may use one front-end to validate a number's range and another to consume it; a value accepted by one and rejected (or reinterpreted) by the other would be a security-relevant disagreement. The engine is in `number_differential.h`, which is also used by `tests/dom/number_differential_tests.cpp`, and `number_differential_stress.cpp` runs the same engine as a deterministic, libFuzzer-free sweep so the check runs on any native machine.
+
 The fuzzers are used in several ways.
 
 * local fuzzing - for developers testing their changes before pushing and/or during development of the fuzzers themselves.

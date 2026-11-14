@@ -50,6 +50,9 @@ if(SIMDJSON_ENABLE_FUZZING)
   function(implement_fuzzer name)
     add_executable(${name} ${name}.cpp)
     target_link_libraries(${name} PRIVATE simdjson-fuzzer)
+    # The differential fuzzers share their engine with the tests; the extra
+    # include directory resolves "number_differential.h".
+    target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     add_dependencies(all_fuzzers ${name})
     set(fuzzernames ${fuzzernames} ${name} PARENT_SCOPE)
   endfunction()
@@ -65,6 +68,7 @@ if(SIMDJSON_ENABLE_FUZZING)
   implement_fuzzer(fuzz_minify)          # minify *with* parsing
   implement_fuzzer(fuzz_minifyimpl)      # minify *without* parsing, plus compare implementations
   implement_fuzzer(fuzz_ndjson)          # the ndjson api
+  implement_fuzzer(fuzz_number_differential) # DOM vs On-Demand numeric range validation
   implement_fuzzer(fuzz_ondemand)
   implement_fuzzer(fuzz_padded)
   implement_fuzzer(fuzz_parser)

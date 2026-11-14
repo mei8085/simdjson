@@ -54,3 +54,8 @@ python3 ../fuzz/gen_fractured_json_corpus.py "$OUT/fuzz_fractured_json"
 # runs after the shared-corpus loop above so the dedicated seeds win the
 # $OUT name.
 python3 ../fuzz/gen_builder_corpus.py "$OUT/fuzz_builder"
+
+# dedicated structured seed corpus + dictionary for the numeric differential
+# fuzzer; runs after the shared-corpus loop above so the boundary-heavy seeds
+# (and their dictionary of number pieces) win the $OUT name.
+python3 ../fuzz/gen_number_differential_corpus.py "$OUT/fuzz_number_differential"

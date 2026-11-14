@@ -15,6 +15,18 @@ add_cpp_test(errortests                 LABELS dom acceptance per_implementation
 add_cpp_test(extracting_values_example  LABELS dom acceptance per_implementation)
 add_cpp_test(integer_tests              LABELS dom acceptance per_implementation)
 add_cpp_test(big_integer_tests          LABELS dom acceptance per_implementation)
+add_cpp_test(number_differential_tests  LABELS dom ondemand acceptance per_implementation)
+
+# Deterministic mutation sweep over the same engine. It is deliberately not
+# gated on SIMDJSON_ENABLE_FUZZING: it needs no libFuzzer, no sanitizer, and no
+# Python, so it runs on any native machine as part of the normal suite. The
+# iteration count and RNG seed are fixed (the defaults baked into the program)
+# so a failure is reproducible.
+add_cpp_test(number_differential_stress
+             SOURCES ${PROJECT_SOURCE_DIR}/fuzz/number_differential_stress.cpp
+             LABELS dom ondemand acceptance per_implementation)
+target_include_directories(number_differential_stress PRIVATE
+                           ${PROJECT_SOURCE_DIR}/fuzz)
 add_cpp_test(nan_inf_tests              LABELS dom acceptance per_implementation)
 add_cpp_test(locale_independence_tests  LABELS dom acceptance per_implementation)
 add_cpp_test(jsoncheck                  NEEDS_DATA LABELS dom acceptance per_implementation)
