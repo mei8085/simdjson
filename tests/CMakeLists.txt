@@ -20,6 +20,7 @@ add_cpp_test(simd8_tests         LABELS other acceptance                   )
 add_cpp_test(allocation_failure_tests LABELS dom ondemand acceptance)
 add_cpp_test(prettify_tests      NEEDS_DATA LABELS other acceptance per_implementation)
 add_cpp_test(fractured_json_tests LABELS other acceptance per_implementation)
+add_cpp_test(cross_kernel_boundary_tests LABELS dom acceptance per_implementation)
 
 # Checks that the headers and the build system agree on whether static
 # reflection is available, and that the matching API works.
