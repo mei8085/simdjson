@@ -56,6 +56,7 @@ if(SIMDJSON_ENABLE_FUZZING)
 
   implement_fuzzer(fuzz_atpath)
   implement_fuzzer(fuzz_atpointer)
+  implement_fuzzer(fuzz_atpointer_parity)
   implement_fuzzer(fuzz_dump)
   implement_fuzzer(fuzz_dump_raw_tape)
   implement_fuzzer(fuzz_element)

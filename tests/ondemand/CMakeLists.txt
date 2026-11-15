@@ -63,6 +63,10 @@ if(NOT SIMDJSON_SANITIZE)
   add_cpp_test(ondemand_cacheline                    LABELS ondemand acceptance per_implementation)
 endif()
 
+# DOM vs On-Demand parity for malformed JSON Pointer / JSONPath queries. This
+# is a cross-front-end test, so it carries both the dom and ondemand labels.
+add_cpp_test(pointer_path_parity_tests             LABELS dom ondemand acceptance per_implementation)
+
 # Add the tests if we're on:
 #   1. Visual Studio 2022 v17.6 or later
 #   2. GCC v14.0.0 or later (GCC v13.0.0 cannot handle pipe operator of lambda)

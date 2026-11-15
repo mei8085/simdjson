@@ -452,7 +452,11 @@ simdjson_inline simdjson_result<value> document::at_pointer(std::string_view jso
     case json_type::object:
       return (*this).get_object().at_pointer(json_pointer);
     default:
-      return INVALID_JSON_POINTER;
+      // A scalar document has no children: a non-empty pointer cannot address
+      // anything in it. Report the same error as dom::element::at_pointer():
+      // a well-formed pointer names a field that cannot exist (NO_SUCH_FIELD),
+      // a malformed one is INVALID_JSON_POINTER.
+      return is_pointer_well_formed(json_pointer) ? NO_SUCH_FIELD : INVALID_JSON_POINTER;
   }
 }
 
@@ -470,8 +474,16 @@ simdjson_inline simdjson_result<value> document::at_path(std::string_view json_p
       return (*this).get_array().at_path(json_path);
   case json_type::object:
       return (*this).get_object().at_path(json_path);
-  default:
+  default: {
+      // A scalar document has no children. A path that converts to a
+      // well-formed JSON Pointer addresses a field that cannot exist
+      // (NO_SUCH_FIELD); one that does not convert is INVALID_JSON_POINTER.
+      // This mirrors dom::element::at_path() on a primitive.
+      const std::string json_pointer = json_path_to_pointer_conversion(json_path);
+      if (json_pointer == "-1") { return INVALID_JSON_POINTER; }
+      if (is_pointer_well_formed(json_pointer)) { return NO_SUCH_FIELD; }
       return INVALID_JSON_POINTER;
+  }
   }
 }
 

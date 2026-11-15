@@ -408,8 +408,18 @@ simdjson_inline simdjson_result<value> value::at_path(std::string_view json_path
       return (*this).get_array().at_path(json_path);
   case json_type::object:
       return (*this).get_object().at_path(json_path);
-  default:
+  default: {
+      // A scalar has no children. A path that converts to a well-formed
+      // JSON Pointer therefore addresses a field that cannot exist, which is
+      // NO_SUCH_FIELD; only a path that does not convert to a well-formed
+      // pointer is INVALID_JSON_POINTER. This mirrors dom::element::at_path()
+      // so the same query against a scalar value reports the same error code
+      // whether the caller is using DOM or On-Demand.
+      const std::string json_pointer = json_path_to_pointer_conversion(json_path);
+      if (json_pointer == "-1") { return INVALID_JSON_POINTER; }
+      if (is_pointer_well_formed(json_pointer)) { return NO_SUCH_FIELD; }
       return INVALID_JSON_POINTER;
+  }
   }
 }
 

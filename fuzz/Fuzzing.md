@@ -11,6 +11,8 @@ The simdjson library tries to follow [fuzzing best practises](https://google.git
 
 There is both "normal" fuzzers just feeding the api with fuzz data, as well as **differential** fuzzers. The differential fuzzers feed the same data to the multiple implementations (haswell, westmere and fallback) and ensure the same results are achieved. This makes sure the user will always get the same answer regardless of which implementation is in use.
 
+`fuzz_atpointer_parity` is a different kind of differential fuzzer: it feeds the same JSON Pointer or JSONPath query to the DOM and On-Demand front-ends and checks that the two agree on the *result* (the error code, or the selected value), not on implementation selection. It exists because a caller may validate a query with one front-end and consume it with the other; an illegal escape, a leading-zero index, an oversized index or an overlong path that one front-end rejects (or resolves elsewhere) and the other accepts would be a security-relevant disagreement. The engine is in `fuzz/pointer_path_parity.h`, which is also used by `tests/ondemand/pointer_path_parity_tests.cpp`, so a fuzzer finding replays as a regression case and a regression case replays in the fuzzer.
+
 The fuzzers are used in several ways.
 
 * local fuzzing - for developers testing their changes before pushing and/or during development of the fuzzers themselves.
